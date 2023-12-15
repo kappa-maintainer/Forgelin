@@ -122,6 +122,7 @@ compileJava {
 }
 
 jar {
+	archiveClassifier = "thin"
 	manifest {
 		attributes "FMLCorePlugin": "net.shadowfacts.forgelin.preloader.ForgelinPlugin",
 				"FMLCorePluginContainsFMLMod": "true"
@@ -130,7 +131,7 @@ jar {
 
 shadowJar {
 	archiveBaseName = mod_main_class + "-kappa-" + minecraft_version + "-" + mod_version
-	archiveClassifier = ""
+	archiveClassifier = "fat"
 	dependencies {
 		include(dependency("org.jetbrains.kotlin:kotlin-stdlib:${kotlin_version}"))
 		include(dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin_version}"))
@@ -156,14 +157,22 @@ artifacts {
 }
 
 publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			artifact jar
-		}
-	}
 	repositories {
 		maven {
-			url "file://${project.projectDir}/mcmodsrepo"
+			name = "outlands"
+			url = "https://maven.outlands.top/releases"
+			credentials(PasswordCredentials)
+			authentication {
+				basic(BasicAuthentication)
+			}
+		}
+	}
+	publications {
+		maven(MavenPublication) {
+			groupId = group
+			artifactId = mod_id
+			version = mod_version
+			from components.java
 		}
 	}
 }
